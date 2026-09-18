@@ -13,28 +13,59 @@ j the frontend I worked on yesterday
 
 This is a small zsh integration, with no Oh My Zsh, plugin manager, fzf, or background daemon required. Existing `z` commands continue to work.
 
-## Setup
+## Installation
 
-Requires zsh, Node 22.18+ with native TypeScript support (or a current Node LTS), and zoxide. Development checks also use Python 3.9+.
+### Quick install
+
+With Git, Node.js, npm, and zoxide installed, run:
 
 ```zsh
-cd /path/to/joxide
-npm ci --ignore-scripts
-# If zoxide is missing: brew install zoxide
-source ./joxide.plugin.zsh
+git clone https://github.com/ant4g0nist/joxide.git "$HOME/.joxide" && npm --prefix "$HOME/.joxide" ci --omit=dev --ignore-scripts
+```
 
-# Seed the index with a projects folder and its immediate subdirectories.
+Add this line to `~/.zshrc` after your other shell integrations, then run the same line in your current zsh terminal:
+
+```zsh
+source "$HOME/.joxide/joxide.plugin.zsh"
+```
+
+This enables `j` and `jctl`. The checkout must stay at that path; if you choose another location, update the source line to match.
+
+### Prerequisites
+
+Use zsh on macOS or Linux, with [Node.js](https://nodejs.org/en/download) 22.18+ on the 22.x line, or 24+, and [zoxide](https://github.com/ajeetdsouza/zoxide#installation). Node runs the TypeScript source directly; no build step is needed.
+
+On macOS with Homebrew, install any missing tools:
+
+```zsh
+brew install git node zoxide
+```
+
+On Linux, install Git and zsh through your distribution's package manager, then follow the Node.js and zoxide installation guides linked above. Run the source command from an interactive zsh shell.
+
+### Enable semantic search
+
+Get a key following the [TypeSafe quick start](https://docs.typesafe.ai/introduction/quickstart), then add this to `~/.zshrc` before the joxide source line, replacing the placeholder:
+
+```zsh
+export TYPESAFE_API_KEY='your-typesafe-api-key'
+```
+
+Open a new terminal to load the setting. Exact paths, directory-name matching, and bare date queries work locally without a key. Semantic queries send project metadata to the TypeSafe API and use your account quota; see [Data and configuration](#data-and-configuration).
+
+### Add your projects
+
+Replace `~/projects` with an existing folder containing your repositories:
+
+```zsh
 jctl index ~/projects
 jctl doctor
+j --local my-project
 ```
 
-Set `TYPESAFE_API_KEY` in your shell for semantic queries. Exact paths, directory-name matching, and bare date queries work locally without a key. Semantic requests use the TypeSafe API and its account quota.
+Replace `my-project` with one of your directory names. You can then try a description such as `j auth backend`. Normal `cd` use grows the index automatically. Date-based history starts when joxide is loaded.
 
-For future terminals, add this line to `~/.zshrc` after your other shell integrations:
-
-```zsh
-source /path/to/joxide/joxide.plugin.zsh
-```
+If `jctl` is not found, run the source line again in zsh. If `jctl doctor` reports a missing executable, make sure `node` and `zoxide` are on your `PATH`, or configure `JOXIDE_NODE` and `JOXIDE_ZOXIDE` before sourcing.
 
 ## Everyday use
 
@@ -106,6 +137,8 @@ Set configuration before sourcing. Export variables used by the CLI, such as `JO
 The only direct npm runtime dependency is the pinned official `@typesafe-ai/sdk`. TypeScript and Node types are development dependencies. Installation scripts are disabled in `.npmrc`. Zoxide is a separate native executable.
 
 ```zsh
+cd "$HOME/.joxide" # Or your checkout directory
+npm ci --ignore-scripts # Include development dependencies; tests also need Python 3.9+
 npm run check  # Type checking, unit tests, actual zsh/zoxide/Node integration
 npm run vet    # /opt/homebrew/bin/vet; npm lockfile and installed zoxide package
 ```
