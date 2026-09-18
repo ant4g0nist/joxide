@@ -1,0 +1,18 @@
+{
+  "name": "joxide",
+  "version": "0.2.0",
+  "description": "Jump to projects by description, powered by zoxide and TypeSafe’s Jev.",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22.18.0" },
+  "bin": { "joxide": "src/jump/cli.ts" },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "test:zsh": "python3 test/jump_integration.py",
+    "vet": "sh scripts/vet.sh",
+    "check": "npm run typecheck && npm test && npm run test:zsh"
+  },
+  "dependencies": { "@typesafe-ai/sdk": "0.6.0" },
+  "devDependencies": { "@types/node": "26.6.1", "typescript": "7.0.2" }
+}
